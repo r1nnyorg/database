@@ -8,3 +8,32 @@ jobs:
               docker login -u chaowenguo -p ${{secrets.DOCKER}}
               docker build -t chaowenguo/postgres .
               docker push chaowenguo/postgres
+              az login --service-principal ${{secrets.AZURE}}
+              if `az group exists -n postgres`
+              then
+                  az group delete -n postgres -y
+              fi
+              az group create -n postgres -l westus
+              az postgres flexible-server create -n postgrespostgres -g postgres -l westus -u postgres -p pos1gres+ -d postgres --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 13 #psql -h postgrespostgres.postgres.database.azure.com -U postgres -d postgres
+              if `az group exists -n mysql`
+              then
+                  az group delete -n mysql -y
+              fi
+              az group create -n mysql -l westus
+              az mysql flexible-server create -n mysqlmysql -g mysql -l westus -u mysql -p my1sql+my -d mysql --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21
+              if `az group exists -n linux`
+              then
+                  az group delete -n linux -y
+              fi
+              az group create -n linux -l westus
+              #az vm image list --offer UbuntuServer --all --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#understand-vm-images
+              #az vm list-sizes --location westus --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#find-available-vm-sizes
+              az vm create -n linux -g linux --image Canonical:UbuntuServer:19_04-gen2:latest --size Standard_B1s --admin-username chaowenguo --generate-ssh-keys --os-disk-size-gb 64
+              #https://docs.microsoft.com/en-us/azure/virtual-machines/linux/nsg-quickstart#quickly-open-a-port-for-a-vm
+              az vm open-port -g linux -n linux --port 443
+              cp ~/.ssh/id_rsa $GITHUB_WORKSPACE/`az vm show -d -g linux -n linux --query publicIps -o tsv`.azure
+              git add *.azure
+              git config user.name dummy
+              git config user.email dummy
+              git commit --allow-empty-message -m ''
+              git push

@@ -21,7 +21,7 @@ jobs:
                   az group delete -n mysql -y
               fi
               az group create -n mysql -l westus
-              az mysql flexible-server create -n mysqlmysql -g mysql -l westus -u mysqlmysql -p my1sql+my -d mysql --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21
+              az mysql flexible-server create -n mysqlsql -g mysql -l westus -u mysqlsql -p my1sql+my -d mysql --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21
               if `az group exists -n linux`
               then
                   az group delete -n linux -y

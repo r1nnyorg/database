@@ -39,7 +39,7 @@ jobs:
               git commit --allow-empty-message -m ''
               git push
               ip=`ls *.azure`
-              ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.azure} 'sudo apt update; sudo apt purge -y snapd; sudo apt install -y --no-install-recommends docker.io'
+              ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.azure} 'sudo apt update; sudo apt purge -y snapd; wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession'
               if `az group exists -n win`
               then
                   az group delete -n win -y

@@ -39,7 +39,4 @@ jobs:
               git commit --allow-empty-message -m ''
               git push
               ip=`ls *.azure`
-              echo $ip
-              echo ${ip%.azure}
-              ssh -i $ip chaowenguo@${ip%.azure} 'sudo apt purge -y snapd; sudo apt install docker.io'
-#
+              ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.azure} 'sudo apt purge -y snapd; sudo apt install docker.io'

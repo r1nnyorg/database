@@ -40,3 +40,8 @@ jobs:
               git push
               ip=`ls *.azure`
               ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.azure} 'sudo apt purge -y snapd; sudo apt install docker.io'
+              if `az group exists -n win`
+              then
+                  az group delete -n win -y
+              fi
+              az group create -n win -l westus

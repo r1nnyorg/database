@@ -39,9 +39,11 @@ jobs:
               git commit --allow-empty-message -m ''
               git push
               ip=`ls *.azure`
-              ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.azure} 'sudo apt purge -y snapd; sudo apt install docker.io'
+              ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.azure} 'sudo apt purge -y snapd; sudo apt update; sudo apt install -y --no-install-recommends docker.io vim libx11-xcb1 x2goserver-xsession'
               if `az group exists -n win`
               then
                   az group delete -n win -y
               fi
               az group create -n win -l westus
+              az vm create -n linux -g linux --image MicrosoftWindowsServer:WindowsServer:2019-datacenter-core-with-containers-smalldisk-g2:latest --size Standard_B1s --admin-username chaowenguo --admin-password HL798820y+HL798820y+ --os-disk-size-gb 64
+              az vm open-port -g linux -n linux --port 22

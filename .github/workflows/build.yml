@@ -42,3 +42,4 @@ jobs:
               echo $ip
               echo ${ip%.azure}
               ssh -i $ip chaowenguo@${ip%.azure} 'sudo apt purge -y snapd; sudo apt install docker.io'
+#

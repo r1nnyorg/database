@@ -29,7 +29,7 @@ jobs:
               az group create -n linux -l westus
               #az vm image list --offer UbuntuServer --all --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#understand-vm-images
               #az vm list-sizes --location westus --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#find-available-vm-sizes
-              az vm create -n linux -g linux --image Canonical:UbuntuServer:19_04-gen2:latest --size Standard_B1s --admin-username chaowenguo --generate-ssh-keys --os-disk-size-gb 64
+              az vm create -n linux -g linux --image Canonical:UbuntuServer:19_10-daily-gen2:latest --size Standard_B1s --admin-username chaowenguo --generate-ssh-keys --os-disk-size-gb 64
               #https://docs.microsoft.com/en-us/azure/virtual-machines/linux/nsg-quickstart#quickly-open-a-port-for-a-vm
               az vm open-port -g linux -n linux --port 443
               cp ~/.ssh/id_rsa $GITHUB_WORKSPACE/`az vm show -d -g linux -n linux --query publicIps -o tsv`.azure

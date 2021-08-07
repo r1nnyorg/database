@@ -1,4 +1,4 @@
-on: push
+#on: push
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -33,12 +33,12 @@ jobs:
               #https://docs.microsoft.com/en-us/azure/virtual-machines/linux/nsg-quickstart#quickly-open-a-port-for-a-vm
               az vm open-port -g linux -n linux --port 443
               cp ~/.ssh/id_rsa $GITHUB_WORKSPACE/`az vm show -d -g linux -n linux --query publicIps -o tsv`.azure
-              git add *.azure
+              git add *.key
               git config user.name dummy
               git config user.email dummy
               git commit --allow-empty-message -m ''
               git push
-              ip=`ls *.azure`
+              ip=`ls *.key`
               ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.azure} 'sudo apt update; sudo apt purge -y snapd; wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession; rm google-chrome-stable_current_amd64.deb'
               if `az group exists -n win`
               then

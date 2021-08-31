@@ -11,6 +11,7 @@ jobs:
               curl -d 'grant_type=client_credentials&client_id=${{secrets.CLIENTID}}&client_secret=${{secrets.CLIENTSECRET}}&resource=https%3A%2F%2Fmanagement.azure.com%2F' https://login.microsoftonline.com/${{secrets.TENANTID}}/oauth2/token | python -c "import json,sys;print(json.load(sys.stdin).get('access_token'))"
               token=`curl -d 'grant_type=client_credentials&client_id=f9a99f30-7555-489b-b058-c8375220064d&client_secret=chM~-Ihedmw5RASnA1.wnTkeJ4YcKa~4yE&resource=https%3A%2F%2Fmanagement.azure.com%2F' https://login.microsoftonline.com/476b320f-8c9c-46cb-8856-624a5d3c2c2c/oauth2/token | python -c "import json,sys;print(json.load(sys.stdin).get('access_token'))"`
               echo $token
+              curl -X HEAD -H 'Authorization: Bearer '$token https://management.azure.com/subscriptions/9046396e-e215-4cc5-9eb7-e25370140233/resourcegroups/piao?api-version=2021-04-01
               if `az group exists -n postgres`
               then
                   az group delete -n postgres -y

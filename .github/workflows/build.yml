@@ -9,7 +9,7 @@ jobs:
               docker build -t chaowenguo/postgres .
               docker push chaowenguo/postgres
               token=`curl -d 'grant_type=client_credentials&client_id=${{secrets.CLIENTID}}&client_secret=${{secrets.CLIENTSECRET}}&resource=https%3A%2F%2Fmanagement.azure.com%2F' https://login.microsoftonline.com/${{secrets.TENANTID}}/oauth2/token | python -c "import json,sys;print(json.load(sys.stdin).get('access_token'))"`
-              curl -I -H 'Authorization: Bearer '$token -w '%{http_code}' https://management.azure.com/subscriptions/9046396e-e215-4cc5-9eb7-e25370140233/resourcegroups/piao?api-version=2021-04-01
+              curl -Is -H 'Authorization: Bearer '$token -w '%{http_code}' -o /dev/null https://management.azure.com/subscriptions/9046396e-e215-4cc5-9eb7-e25370140233/resourcegroups/piao?api-version=2021-04-01
               if `az group exists -n postgres`
               then
                   az group delete -n postgres -y

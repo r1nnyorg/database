@@ -16,15 +16,16 @@ jobs:
               fi
               curl -X PUT -H 'Authorization: Bearer '$token -H content-type:application/json -d '{"location":"westus"}' https://management.azure.com/subscriptions/$subscription/resourcegroups/postgres?api-version=2021-04-01
               curl -X PUT -H 'Authorization: Bearer '$token -H content-type:application/json -d '{"location":"westus", "sku":{"tier":"Burstable","name":"Standard_B1ms"}, "properties":{"administratorLogin":"postgres","administratorLoginPassword":"pos1gres+","version":"13","storageProfile":{"storageMB":32768}}}' https://management.azure.com/subscriptions/$subscription/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres?api-version=2020-02-14-preview
+              curl https://management.azure.com/subscriptions/$subscription/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres?api-version=2020-02-14-preview
               curl -X PUT -H 'Authorization: Bearer '$token -H content-type:application/json -d '{"properties":{"startIpAddress":"0.0.0.0","endIpAddress":"255.255.255.255"}}' https://management.azure.com/subscriptions/$subscription/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres/firewallRules/postgres?api-version=2020-02-14-preview
               curl -X PUT -H 'Authorization: Bearer '$token -H content-type:application/json -d '{"properties":{"charset":"utf8","collation":"en_US.utf8"}}' https://management.azure.com/subscriptions/$subscription/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres/databases/default?api-version=2020-11-05-preview
               #az postgres flexible-server create -n postgrespostgres -g postgres -l westus -u postgres -p pos1gres+ -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 13
               #PGPASSWORD=pos1gres+ psql -h postgrespostgres.postgres.database.azure.com -U postgres -d default -f database.sql
-              #if `az group exists -n mysql`
-              #then
-              #    az group delete -n mysql -y
-              #fi
-              #az group create -n mysql -l westus
+              if [ `curl -Is -H 'Authorization: Bearer '$token -w '%{http_code}' -o /dev/null https://management.azure.com/subscriptions/$subscription/resourcegroups/mysql?api-version=2021-04-01` = 204 ]
+              then
+                  curl -X DELETE -H 'Authorization: Bearer '$token https://management.azure.com/subscriptions/$subscription/resourcegroups/mysql?api-version=2021-04-01
+              fi
+              curl -X PUT -H 'Authorization: Bearer '$token -H content-type:application/json -d '{"location":"westus"}' https://management.azure.com/subscriptions/$subscription/resourcegroups/mysql?api-version=2021-04-01
               #az mysql flexible-server create -n mysqlmysql -g mysql -l westus -u mysql -p my1sql+my -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21
               #mysql -h mysqlmysql.mysql.database.azure.com -u mysql -pmy1sql+my -e "SET sql_mode='ANSI_QUOTES'"
               #mysql -h mysqlmysql.mysql.database.azure.com -u mysql -pmy1sql+my -D default < database.sql

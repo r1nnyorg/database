@@ -8,7 +8,7 @@ jobs:
               docker login -u chaowenguo -p ${{secrets.DOCKER}}
               docker build -t chaowenguo/postgres .
               docker push chaowenguo/postgres
-              az login --service-principal ${{secrets.AZURE}}
+              curl -d 'grant_type=client_credentials&client_id=${{secrets.CLIENTID}}&client_secret=${{secrets.CLIENTSECRET}}&resource=https%3A%2F%2Fmanagement.azure.com%2F' https://login.microsoftonline.com/${{secrets.TENANTID}}/oauth2/token | python -c "import json,sys;print(json.load(sys.stdin).get('access_token'))"
               if `az group exists -n postgres`
               then
                   az group delete -n postgres -y

@@ -22,12 +22,16 @@ async def postgres(session, token):
                 async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres/firewallRules/postgres?api-version=2020-02-14-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'startIpAddress':'0.0.0.0','endIpAddress':'255.255.255.255'}}) as firewall, session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres/databases/default?api-version=2020-11-05-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'charset':'utf8','collation':'en_US.utf8'}}) as database:
-        print(firewall.status)
-        print(firewall.headers)
-        print(await firewall.json())
-        print(database.status)
-        print(database.headers)
-        print(await database.json())
+        if firewall.status == 202:
+            while True:
+                await asyncio.sleep(int(firewall.headers.get('retry-after')))
+                async with session.get(firewall.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                    if (await _.json()).get('status') == 'Succeeded': break
+        if database.status == 202:
+            while True:
+                await asyncio.sleep(int(database.headers.get('retry-after')))
+                async with session.get(database.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                    if (await _.json()).get('status') == 'Succeeded': break
 
 async def mysql(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:

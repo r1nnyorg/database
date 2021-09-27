@@ -1,9 +1,7 @@
 import aiohttp, asyncio, argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('clientid')
-parser.add_argument('clientsecret')
-parser.add_argument('tenantid')
+for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
 args = parser.parse_args()
 subscription='9046396e-e215-4cc5-9eb7-e25370140233'
 
@@ -19,6 +17,7 @@ async def main():
                             while True:
                                 await asyncio.sleep(int(response.headers.get('retry-after')))
                                 async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
+                                    print(_.status)
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres?api-version=2020-02-14-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':'postgres','administratorLoginPassword':'pos1gres+','version':'13','storageProfile':{'storageMB':32768}}}) as response:

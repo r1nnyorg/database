@@ -14,8 +14,9 @@ async def main():
             async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
                 if response.status == 204:
                     async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
-                        print(response.status)
-                        print(response.headers)
+                        if response.status == 202:
+                            async with session.get(response.headers.location, headers={'Authorization':f'Bearer {token}'}) as response:
+                                print(await response.json())
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response:
                 print(response.status)
                 print(response.headers)

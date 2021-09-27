@@ -1,4 +1,4 @@
-import aiohttp, asyncio, argparse
+import aiohttp, asyncio, argparse, asyncpg, pathlib
 
 parser = argparse.ArgumentParser()
 for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
@@ -32,6 +32,9 @@ async def postgres(session, token):
                 await asyncio.sleep(int(database.headers.get('retry-after')))
                 async with session.get(database.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
+    database = await asyncpg.create_pool(host='postgrespostgres.postgres.database.azure.com', user='postgres', database='default', password='pos1gres+'))
+    await database.execute(pathlib.Path('database.sql').read_text())
+    await database.close()
 
 async def mysql(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:

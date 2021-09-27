@@ -16,7 +16,7 @@ async def main():
                     async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
                         if response.status == 202:
                             while True:
-                                asyncio.sleep(response.headers.get('Retry-After'))
+                                await asyncio.sleep(response.headers.get('Retry-After'))
                                 async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response:

@@ -51,6 +51,7 @@ async def main():
                 print(response.status)
                 print(response.headers)
                 print(await response.json())
+            #async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/databases/default?api-version=2020-07-01-preview')
                                 
 asyncio.run(main())
 

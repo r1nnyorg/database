@@ -50,7 +50,10 @@ async def mysql(session, token):
          print(response.status)
          print(response.headers)
          print(await response.json())
-            #async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/databases/default?api-version=2020-07-01-preview')
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/databases/default?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'charset':'utf8','collation':'utf8_general_ci'}}) as response:
+         print(response.status)
+         print(response.headers)
+         print(await response.json())
 
 async def main():
     async with aiohttp.ClientSession() as session:

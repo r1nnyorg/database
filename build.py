@@ -1,10 +1,16 @@
-import aiohttp, asyncio
+import aiohttp, asyncio, argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('clientid')
+parser.add_argument('clientsecret')
+parser.add_argument('tenantid')
+args = parser.parse_args()
+print(args.echo)
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        async with session.post('https://login.microsoftonline.com/${{secrets.TENANTID}}/oauth2/token', json={}) as resp:
-            print(resp.status)
-            print(await resp.text())
+        async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', json={'grant_type':'client_credentials', 'client_id':args.cientid, 'client_secret':args.clientsecret, 'resource':'https%3A%2F%2Fmanagement.azure.com%2F'}) as response:
+            print(await response.json())
 
 asyncio.run(main())
 

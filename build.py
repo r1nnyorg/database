@@ -15,7 +15,8 @@ async def postgres(session, token):
                         async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if _.status == 200: break
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres?api-version=2020-02-14-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':'postgres','administratorLoginPassword':'pos1gres+','version':'13','storageProfile':{'storageMB':32 * 1024}}}) as response:
+    password = 'pos1gres+'
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres?api-version=2020-02-14-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':'postgres','administratorLoginPassword':password,'version':'13','storageProfile':{'storageMB':32 * 1024}}}) as response:
         if response.status == 202:
             while True:
                 await asyncio.sleep(int(response.headers.get('retry-after')))
@@ -32,7 +33,7 @@ async def postgres(session, token):
                 await asyncio.sleep(int(database.headers.get('retry-after')))
                 async with session.get(database.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-    database = await asyncpg.create_pool(host='postgrespostgres.postgres.database.azure.com', user='postgres', database='default', password='pos1gres+')
+    database = await asyncpg.create_pool(host='postgrespostgres.postgres.database.azure.com', user='postgres', database='default', password=password)
     await database.execute(pathlib.Path('database.sql').read_text())
     await database.close()
 

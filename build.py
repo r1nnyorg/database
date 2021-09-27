@@ -8,7 +8,7 @@ args = parser.parse_args()
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', json={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https%3A%2F%2Fmanagement.azure.com%2F'}) as response:
+        async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', json={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
             print(await response.json())
 
 asyncio.run(main())

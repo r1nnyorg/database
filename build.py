@@ -5,13 +5,7 @@ for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
 args = parser.parse_args()
 subscription='9046396e-e215-4cc5-9eb7-e25370140233'
 
-async def token():
-    async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
-            return session, (await response.json()).get('access_token')
-
-async def main():
-    session, token = await token()
+async def postgres(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
         if response.status == 204:
             async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
@@ -35,6 +29,8 @@ async def main():
         print(response.status)
         print(response.headers)
         print(await response.json())
+
+async def mysql(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
         if response.status == 204:
             async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
@@ -55,7 +51,13 @@ async def main():
          print(response.headers)
          print(await response.json())
             #async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/databases/default?api-version=2020-07-01-preview')
-                                
+
+async def main():
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
+            token = (await response.json).get('access-token')
+            await asyncio.gather(postgres(session, token), mysql(session, token))
+            
 asyncio.run(main())
 
               

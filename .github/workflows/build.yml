@@ -8,7 +8,7 @@ jobs:
               docker login -u chaowenguo -p ${{secrets.DOCKER}}
               docker build -t chaowenguo/postgres .
               docker push chaowenguo/postgres
-              pip install aiohttp
+              pip install aiohttp asyncpg
               python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
               #subscription=9046396e-e215-4cc5-9eb7-e25370140233
               #token=`curl -s -d 'grant_type=client_credentials&client_id=${{secrets.CLIENTID}}&client_secret=${{secrets.CLIENTSECRET}}&resource=https%3A%2F%2Fmanagement.azure.com%2F' https://login.microsoftonline.com/${{secrets.TENANTID}}/oauth2/token | python -c "import json,sys;print(json.load(sys.stdin).get('access_token'))"`

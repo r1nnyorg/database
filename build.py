@@ -18,7 +18,7 @@ async def main():
                                 async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres?api-version=2020-02-14-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':'postgres','administratorLoginPassword':'pos1gres+','version':'13','storageProfile':{'storageMB':32768}}}) as response:
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres?api-version=2020-02-14-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':'postgres','administratorLoginPassword':'pos1gres+','version':'13','storageProfile':{'storageMB':32 * 1024}}}) as response:
                 if response.status == 202:
                     while True:
                         await asyncio.sleep(int(response.headers.get('retry-after')))
@@ -41,7 +41,13 @@ async def main():
                                 async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
-                
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':'mysql','administratorLoginPassword':'my1sql+my','version':'8.0.21','storageProfile':{'storageMB':32 * 1024}}}) as response:
+                if response.status == 202:
+                    while True:
+                        await asyncio.sleep(int(response.headers.get('retry-after')))
+                        async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                            if (await _.json()).get('status') == 'Succeeded': break
+                                
 asyncio.run(main())
 
               

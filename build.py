@@ -32,6 +32,15 @@ async def main():
                 print(response.status)
                 print(response.headers)
                 print(await response.json())
+            async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
+                if response.status == 204:
+                    async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
+                        if response.status == 202:
+                            while True:
+                                await asyncio.sleep(int(response.headers.get('retry-after')))
+                                async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
+                                    if _.status == 200: break
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
                 
 asyncio.run(main())
 

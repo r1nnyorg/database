@@ -65,7 +65,7 @@ async def linux(session, token):
                         async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if _.status == 200: break
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, )
+    #async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, )
     
 async def main():
     async with aiohttp.ClientSession() as session:

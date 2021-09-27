@@ -5,15 +5,17 @@ parser.add_argument('clientid')
 parser.add_argument('clientsecret')
 parser.add_argument('tenantid')
 args = parser.parse_args()
+subscription='9046396e-e215-4cc5-9eb7-e25370140233'
 
 async def main():
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
-            print((await response.json()).get('access_token'))
+            token = (await response.json()).get('access_token')
+            async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
+                print(response.status)
 
 asyncio.run(main())
 
-#subscription=9046396e-e215-4cc5-9eb7-e25370140233
               #token=`curl -s -d 'grant_type=client_credentials&client_id=${{secrets.CLIENTID}}&client_secret=${{secrets.CLIENTSECRET}}&resource=https%3A%2F%2Fmanagement.azure.com%2F'  | python -c "import json,sys;print(json.load(sys.stdin).get('access_token'))"`
               #curl -Is -H 'Authorization: Bearer '$token -w '%{http_code}' -o /dev/null https://management.azure.com/subscriptions/$subscription/resourcegroups/postgres?api-version=2021-04-01
               #if [ `curl -Is -H 'Authorization: Bearer '$token -w '%{http_code}' -o /dev/null https://management.azure.com/subscriptions/$subscription/resourcegroups/postgres?api-version=2021-04-01` = 204 ]

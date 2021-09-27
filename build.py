@@ -28,6 +28,10 @@ async def main():
                 print(response.status)
                 print(response.headers)
                 print(await response.json())
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres/databases/default?api-version=2020-11-05-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'charset':'utf8','collation':'en_US.utf8'}}) as response:
+                print(response.status)
+                print(response.headers)
+                print(await response.json())
                 
 asyncio.run(main())
 

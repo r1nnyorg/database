@@ -16,7 +16,7 @@ async def main():
                     async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
                         print(response.status)
                         print(response.headers)
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, data={'location':'westus'}) as response:
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}', 'content-type':'application/json'}, data={'location':'westus'}) as response:
                 print(response.status)
                 print(response.headers)
                 print(await response.json())

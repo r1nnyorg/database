@@ -19,13 +19,12 @@ async def main():
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres?api-version=2020-02-14-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':'postgres','administratorLoginPassword':'pos1gres+','version':'13','storageProfile':{'storageMB':32768}}}) as response:
-                print(response.status)
                 if response.status == 202:
-                    #while True:
-                    await asyncio.sleep(int(response.headers.get('retry-after')))
-                    async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                        print((await _.json()).get('status'))
-                            #if (await _.json()).get('status') == 'Succeeded': break
+                    while True:
+                        await asyncio.sleep(int(response.headers.get('retry-after')))
+                        async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                            print((await _.json()).get('status'), flush=True)
+                            if (await _.json()).get('status') == 'Succeeded': break
             #async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres/firewallRules/postgres?api-version=2020-02-14-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'startIpAddress':'0.0.0.0','endIpAddress':'255.255.255.255'}}) as response:
             #    print(response.status)
                 

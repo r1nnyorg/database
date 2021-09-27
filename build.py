@@ -65,7 +65,8 @@ async def linux(session, token):
                         async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if _.status == 200: break
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
-
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, )
+    
 async def main():
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
@@ -75,9 +76,7 @@ async def main():
 asyncio.run(main())
 
               
-              #curl -i -X PUT -H 'Authorization: Bearer '$token -H content-type:application/json -d '{"location":"westus", "sku":{"tier":"Burstable","name":"Standard_B1ms"}, "properties":{"administratorLogin":"postgres","administratorLoginPassword":"pos1gres+","version":"13","storageProfile":{"storageMB":32768}}}' https://management.azure.com/subscriptions/$subscription/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres?api-version=2020-02-14-preview
-              #curl -i -X PUT -H 'Authorization: Bearer '$token -H content-type:application/json -d '{"properties":{"startIpAddress":"0.0.0.0","endIpAddress":"255.255.255.255"}}' https://management.azure.com/subscriptions/$subscription/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres/firewallRules/postgres?api-version=2020-02-14-preview
-              #curl -i -X PUT -H 'Authorization: Bearer '$token -H content-type:application/json -d '{"properties":{"charset":"utf8","collation":"en_US.utf8"}}' https://management.azure.com/subscriptions/$subscription/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/postgrespostgres/databases/default?api-version=2020-11-05-preview
+
               #az postgres flexible-server create -n postgrespostgres -g postgres -l westus -u postgres -p pos1gres+ -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 13
               #PGPASSWORD=pos1gres+ psql -h postgrespostgres.postgres.database.azure.com -U postgres -d default -f database.sql
               #if [ `curl -Is -H 'Authorization: Bearer '$token -w '%{http_code}' -o /dev/null https://management.azure.com/subscriptions/$subscription/resourcegroups/mysql?api-version=2021-04-01` = 204 ]
@@ -108,7 +107,3 @@ asyncio.run(main())
               #az group create -n win -l westus
               #az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2019-datacenter-core-with-containers-smalldisk-g2:latest --size Standard_B1s --admin-username chaowenguo --admin-password HL798820y+HL798820y+ --os-disk-size-gb 64
               #az vm open-port -g win -n win --port 22
-        #- uses: actions/upload-artifact@main
-        #  with:
-        #      path: |
-        #          *.key

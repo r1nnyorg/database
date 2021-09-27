@@ -47,6 +47,10 @@ async def main():
                         await asyncio.sleep(int(response.headers.get('retry-after')))
                         async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/firewallRules/mysql?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'startIpAddress':'0.0.0.0','endIpAddress':'255.255.255.255'}}) as response:
+                print(response.status)
+                print(response.headers)
+                print(await response.json())
                                 
 asyncio.run(main())
 

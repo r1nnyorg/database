@@ -26,7 +26,7 @@ async def postgres(session, token):
         print(firewall.headers)
         print(await firewall.json())
         print(database.status)
-        print(databse.headers)
+        print(database.headers)
         print(await database.json())
 
 async def mysql(session, token):

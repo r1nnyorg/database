@@ -1,4 +1,4 @@
-import aiohttp, asyncio, argparse, asyncpg, pathlib
+import aiohttp, asyncio, argparse, asyncpg, pathlib, asyncmy
 
 parser = argparse.ArgumentParser()
 for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
@@ -56,15 +56,18 @@ async def mysql(session, token):
                 await asyncio.sleep(int(response.headers.get('retry-after')))
                 async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/firewallRules/mysql?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'startIpAddress':'0.0.0.0','endIpAddress':'255.255.255.255'}}) as response:
-         print(response.status)
-         print(response.headers)
-         print(await response.json())
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/databases/default?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'charset':'utf8','collation':'utf8_general_ci'}}) as response:
-         print(response.status)
-         print(response.headers)
-         print(await response.json())
-            
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/firewallRules/mysql?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'startIpAddress':'0.0.0.0','endIpAddress':'255.255.255.255'}}) as firewall, session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/databases/default?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'charset':'utf8','collation':'utf8_general_ci'}}) as database:
+        if firewall.status == 202:
+            while True:
+                await asyncio.sleep(int(firewall.headers.get('retry-after')))
+                async with session.get(firewall.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                    if (await _.json()).get('status') == 'Succeeded': break
+        if database.status == 202:
+            while True:
+                await asyncio.sleep(int(database.headers.get('retry-after')))
+                async with session.get(database.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                    if (await _.json()).get('status') == 'Succeeded': break
+    
 async def linux(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
         if response.status == 204:

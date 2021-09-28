@@ -70,7 +70,7 @@ async def mysql(session, token):
     database = await asyncmy.create_pool(host='mysqlmysql.mysql.database.azure.com', user='mysql', database='default', password='my1sql+my')
     async with database.acquire() as conn:
         async with conn.cursor() as cur:
-            await cur.execute(pathlib.Path('database.sql').read_text())
+            await cur.execute("SET sql_mode='ANSI_QUOTES'\n" + pathlib.Path('database.sql').read_text())
     await database.close()
     
 async def linux(session, token):

@@ -67,6 +67,11 @@ async def mysql(session, token):
                 await asyncio.sleep(int(database.headers.get('retry-after')))
                 async with session.get(database.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
+    database = await asyncmy.create_pool(host='mysqlmysql.mysql.database.azure.com', user='mysql', database='default', password='my1sql+my')
+    async with database.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(pathlib.Path('database.sql').read_text())
+    await database.close()
     
 async def linux(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:

@@ -78,10 +78,10 @@ async def mysql(session, token):
                     if (await _.json()).get('status') == 'Succeeded': break
     database = await asyncmy.create_pool(host='mysqlmysql.mysql.database.azure.com', user='mysql', db='default', password='my1sql+my', sql_mode='ANSI_QUOTES', ssl=ssl.create_default_context(cafile='DigiCertGlobalRootCA.crt.pem'))
     async with database.acquire() as conn:
-        asaz mysql flexible-server create -n mysqlmysql -g mysql -l westus -u mysql -p my1sql+my -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21ync with conn.cursor() as cur:
+        async with conn.cursor() as cur:
             await cur.execute(pathlib.Path('database.sql').read_text())
     database.close()
-    await databaz mysql flexible-server create -n mysqlmysql -g mysql -l westus -u mysql -p my1sql+my -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21ase.wait_closed()
+    await datase.wait_closed()
     
 async def linux(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:

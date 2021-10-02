@@ -14,6 +14,7 @@ jobs:
               docker push chaowenguo/postgres
               pip install aiohttp asyncpg asyncmy
               python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
+              ls -al ~/.ssh
               #if `az group exists -n linux`
               #then
               #    az group delete -n linux -y

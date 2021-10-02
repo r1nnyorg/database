@@ -62,7 +62,7 @@ async def mysql(session, token):
     host = 'mysqlmysql'
     user = 'mysql'
     password = 'my1sql+my'
-    default = 'default'
+    default = 'defaultt'
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/{host}?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':user,'administratorLoginPassword':password,'version':'8.0.21','storageProfile':{'storageMB':32 * 1024}}}) as response:
         if response.status == 202:
             while True:

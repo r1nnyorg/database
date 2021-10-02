@@ -5,13 +5,18 @@ for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
 args = parser.parse_args()
 subscription='9046396e-e215-4cc5-9eb7-e25370140233'
 
+#az login --service-principal -u <app-id> -p <password-or-cert> --tenant <tenant>
+#az group delete -n postgres -y
+#az group create -n postgres -l westus
+#az postgres flexible-server create -n postgrespostgres -g postgres -l westus -u postgres -p pos1gres+ -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 13
+#PGPASSWORD=pos1gres+ psql -h postgrespostgres.postgres.database.azure.com -U postgres -d default -f database.sql
 async def postgres(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
         if response.status == 204:
             async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
                 if response.status == 202:
                     while True:
-                        await asyncio.sleep(int(response.headers.get('retry-after')))
+                     #    az group delete -n linux -y                 await asyncio.sleep(int(response.headers.get('retry-after')))
                         async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if _.status == 200: break
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
@@ -40,6 +45,10 @@ async def postgres(session, token):
     await database.execute(pathlib.Path('database.sql').read_text())
     await database.close()
 
+#az group delete -n mysql -y
+#az group create -n mysql -l westus
+#az mysql flexible-server create -n mysqlmysql -g mysql -l westus -u mysql -p my1sql+my -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21
+#mysql -h mysqlmysql.mysql.database.azure.com -u mysql -pmy1sql+my -D default < database.sql
 async def mysql(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
         if response.status == 204:
@@ -69,10 +78,10 @@ async def mysql(session, token):
                     if (await _.json()).get('status') == 'Succeeded': break
     database = await asyncmy.create_pool(host='mysqlmysql.mysql.database.azure.com', user='mysql', db='default', password='my1sql+my', sql_mode='ANSI_QUOTES', ssl=ssl.create_default_context(cafile='DigiCertGlobalRootCA.crt.pem'))
     async with database.acquire() as conn:
-        async with conn.cursor() as cur:
+        asaz mysql flexible-server create -n mysqlmysql -g mysql -l westus -u mysql -p my1sql+my -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21ync with conn.cursor() as cur:
             await cur.execute(pathlib.Path('database.sql').read_text())
     database.close()
-    await database.wait_closed()
+    await databaz mysql flexible-server create -n mysqlmysql -g mysql -l westus -u mysql -p my1sql+my -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21ase.wait_closed()
     
 async def linux(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
@@ -94,16 +103,6 @@ async def main():
             
 asyncio.run(main())
 
-              #az postgres flexible-server create -n postgrespostgres -g postgres -l westus -u postgres -p pos1gres+ -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 13
-              #PGPASSWORD=pos1gres+ psql -h postgrespostgres.postgres.database.azure.com -U postgres -d default -f database.sql
-              #if [ `curl -Is -H 'Authorization: Bearer '$token -w '%{http_code}' -o /dev/null https://management.azure.com/subscriptions/$subscription/resourcegroups/mysql?api-version=2021-04-01` = 204 ]
-              #then
-              #    curl -X DELETE -H 'Authorization: Bearer '$token https://management.azure.com/subscriptions/$subscription/resourcegroups/mysql?api-version=2021-04-01
-              #fi
-              #curl -X PUT -H 'Authorization: Bearer '$token -H content-type:application/json -d '{"location":"westus"}' https://management.azure.com/subscriptions/$subscription/resourcegroups/mysql?api-version=2021-04-01
-              #az mysql flexible-server create -n mysqlmysql -g mysql -l westus -u mysql -p my1sql+my -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 8.0.21
-              #mysql -h mysqlmysql.mysql.database.azure.com -u mysql -pmy1sql+my -e "SET sql_mode='ANSI_QUOTES'"
-              #mysql -h mysqlmysql.mysql.database.azure.com -u mysql -pmy1sql+my -D default < database.sql
               #if `az group exists -n linux`
               #then
               #    az group delete -n linux -y

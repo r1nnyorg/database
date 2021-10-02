@@ -71,7 +71,8 @@ async def mysql(session, token):
     async with database.acquire() as conn:
         async with conn.cursor() as cur:
             await cur.execute(pathlib.Path('database.sql').read_text())
-    await database.close()
+    database.close()
+    await database.wait_closed()
     
 async def linux(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:

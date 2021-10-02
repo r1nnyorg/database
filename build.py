@@ -1,4 +1,4 @@
-import aiohttp, asyncio, argparse, asyncpg, pathlib, asyncmy
+import aiohttp, asyncio, argparse, asyncpg, pathlib, asyncmy, ssl
 
 parser = argparse.ArgumentParser()
 for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
@@ -67,7 +67,7 @@ async def mysql(session, token):
                 await asyncio.sleep(int(database.headers.get('retry-after')))
                 async with session.get(database.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-    database = await asyncmy.create_pool(host='mysqlmysql.mysql.database.azure.com', user='mysql', db='default', password='my1sql+my', sql_mode='ANSI_QUOTES')
+    database = await asyncmy.create_pool(host='mysqlmysql.mysql.database.azure.com', user='mysql', db='default', password='my1sql+my', sql_mode='ANSI_QUOTES', ssl=ssl.create_default_context(cafile='DigiCertGlobalRootCA.crt.pem'))
     async with database.acquire() as conn:
         async with conn.cursor() as cur:
             await cur.execute(pathlib.Path('database.sql').read_text())

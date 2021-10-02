@@ -59,13 +59,17 @@ async def mysql(session, token):
                         async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if _.status == 200: break
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':'mysql','administratorLoginPassword':'my1sql+my','version':'8.0.21','storageProfile':{'storageMB':32 * 1024}}}) as response:
+    host = 'mysqlmysql'
+    user = 'mysql'
+    password = 'my1sql+my'
+    default = 'default'
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/{host}?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':user,'administratorLoginPassword':password,'version':'8.0.21','storageProfile':{'storageMB':32 * 1024}}}) as response:
         if response.status == 202:
             while True:
                 await asyncio.sleep(int(response.headers.get('retry-after')))
                 async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/firewallRules/mysql?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'startIpAddress':'0.0.0.0','endIpAddress':'255.255.255.255'}}) as firewall, session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/mysqlmysql/databases/default?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'charset':'utf8','collation':'utf8_general_ci'}}) as database:
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/{host}/firewallRules/mysql?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'startIpAddress':'0.0.0.0','endIpAddress':'255.255.255.255'}}) as firewall, session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/mysql/providers/Microsoft.DBForMySql/flexibleServers/{host}/databases/{default}?api-version=2020-07-01-preview', headers={'Authorization':f'Bearer {token}'}, json={'properties':{'charset':'utf8','collation':'utf8_general_ci'}}) as database:
         if firewall.status == 202:
             while True:
                 await asyncio.sleep(int(firewall.headers.get('retry-after')))
@@ -76,7 +80,7 @@ async def mysql(session, token):
                 await asyncio.sleep(int(database.headers.get('retry-after')))
                 async with session.get(database.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-    database = await asyncmy.create_pool(host='mysqlmysql.mysql.database.azure.com', user='mysql', db='default', password='my1sql+my', sql_mode='ANSI_QUOTES', ssl=ssl.create_default_context(cafile='DigiCertGlobalRootCA.crt.pem'))
+    database = await asyncmy.create_pool(host=f'{host}.mysql.database.azure.com', user=user, db=default, password=password, sql_mode='ANSI_QUOTES', ssl=ssl.create_default_context(cafile='DigiCertGlobalRootCA.crt.pem'))
     async with database.acquire() as conn:
         async with conn.cursor() as cur:
             await cur.execute(pathlib.Path('database.sql').read_text())

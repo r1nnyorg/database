@@ -16,6 +16,7 @@ jobs:
               docker build -t chaowenguo/postgres .
               docker push chaowenguo/postgres
               pip install aiohttp asyncpg asyncmy oci
+              echo '${{secrets.OCI}}' > oci.key
               python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
               ls -al ~/.ssh
               #if `az group exists -n linux`

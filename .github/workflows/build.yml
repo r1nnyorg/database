@@ -15,7 +15,7 @@ jobs:
               docker login -u chaowenguo -p ${{secrets.DOCKER}}
               docker build -t chaowenguo/postgres .
               docker push chaowenguo/postgres
-              pip install aiohttp asyncpg asyncmy
+              pip install aiohttp asyncpg asyncmy oci
               python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
               ls -al ~/.ssh
               #if `az group exists -n linux`

@@ -15,7 +15,7 @@ jobs:
               docker login -u chaowenguo -p ${{secrets.DOCKER}}
               docker build -t chaowenguo/postgres .
               docker push chaowenguo/postgres
-              pip install aiohttp asyncpg asyncmy oci
+              pip install aiohttp asyncpg asyncmy oci cx_Oracle
               echo '${{secrets.OCI}}' > oci.key
               python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
               ls -al ~/.ssh

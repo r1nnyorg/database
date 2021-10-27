@@ -18,7 +18,6 @@ jobs:
               pip install aiohttp asyncpg asyncmy oci
               echo '${{secrets.OCI}}' > oci.key
               python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
-              ls -al
               ls -al ~/.ssh
               #if `az group exists -n linux`
               #then

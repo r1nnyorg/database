@@ -10,6 +10,8 @@ transaction = oci.database.models.CreateAutonomousDatabaseBase(compartment_id=co
 #databaseClientCompositeOperations.create_autonomous_database_and_wait_for_state(transaction, wait_for_states=[oci.database.models.AutonomousDatabase.LIFECYCLE_STATE_AVAILABLE])
 generateAutonomousDatabaseWalletDetails = oci.database.models.GenerateAutonomousDatabaseWalletDetails(password=password)
 for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('tenancy')).data: pathlib.Path(_.id).write_bytes(databaseClient.generate_autonomous_database_wallet(_.id, generateAutonomousDatabaseWalletDetails).data)
+connection = cx_Oracle.connect('admin', password, 'tcps://adb.us-sanjose-1.oraclecloud.com:1522/abc_cjjson_high.adb.oraclecloud.com?wallet_location=/Users/cjones/Cloud/CJJSON')
+#https://www.oracle.com/database/technologies/instant-client.html
 
 parser = argparse.ArgumentParser()
 for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
@@ -134,7 +136,7 @@ async def main():
               #az vm list-sizes --location westus --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#find-available-vm-sizes
               #az vm create -n linux -g linux --image Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:latest --size Standard_B1s --admin-username chaowenguo --generate-ssh-keys --os-disk-size-gb 64
               #https://docs.microsoft.com/en-us/azure/virtual-machines/linux/nsg-quickstart#quickly-open-a-port-for-a-vm
-              #az vm open-port -g linux -n linux --port 443
+              #az vm open-pconnection = cx_Oracle.connect(username, password, connect_string)ort -g linux -n linux --port 443
               #cp ~/.ssh/id_rsa `az vm show -d -g linux -n linux --query publicIps -o tsv`.key
               #ip=`ls *.key`
               #ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.key} 'sudo apt update; sudo apt purge -y snapd; wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession; rm google-chrome-stable_current_amd64.deb'

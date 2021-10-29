@@ -14,9 +14,8 @@ for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('
     tnsnames = pathlib.Path(_.id).joinpath('tnsnames.ora').read_text()
     connection = cx_Oracle.connect('admin', password, f"tcps://{re.search('(?<=host=)[.0-9a-z-]+', tnsnames).group(0)}:1522/{re.search('(?<=service_name=)[.0-9a-z_]+', tnsnames).group(0)}?wallet_location={_.id}")
     cursor = connection.cursor()
-    cursor.execute('drop table pytab')
-    for row in cursor.execute('SELECT table_name, owner FROM user_tables'): print(row)
-    #https://www.oracle.com/database/technologies/instant-client.html
+    cursor.execute(pathlib.Path('database.sql').read_text())
+#https://www.oracle.com/database/technologies/instant-client.html
 
 parser = argparse.ArgumentParser()
 for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)

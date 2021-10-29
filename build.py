@@ -23,7 +23,7 @@ for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('
          (6, "Sixth" ),
          (7, "Seventh" ) ]
     cursor.executemany("insert into pytab(id, data) values (:1, :2)", rows)
-    for row in cursor.execute('select * from pytab'): print(row)
+    for row in cursor.execute('SELECT table_name, owner FROM user_tables'): print(row)
     #https://www.oracle.com/database/technologies/instant-client.html
 
 parser = argparse.ArgumentParser()

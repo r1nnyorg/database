@@ -12,7 +12,7 @@ generateAutonomousDatabaseWalletDetails = oci.database.models.GenerateAutonomous
 for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('tenancy')).data:
     zipfile.ZipFile(io.BytesIO(databaseClient.generate_autonomous_database_wallet(_.id, generateAutonomousDatabaseWalletDetails).data.content)).extractall(_.id)
     tnsnames = pathlib.Path(_.id).joinpath('tnsnames.ora').read_text()
-    connection = cx_Oracle.connect('admin', password, f"tcps://{re.search('(?<=host=)[.\w]+', tnsnames).group(0)}:1522/{re.search('(?<=service_name=)[.\w]+', tnsnames).group(0)}?wallet_location={_.id}")
+    connection = cx_Oracle.connect('admin', password, f"tcps://{re.search('(?<=host=)[.0-9a-z-]+', tnsnames).group(0)}:1522/{re.search('(?<=service_name=)[.0-9a-z_]+', tnsnames).group(0)}?wallet_location={_.id}")
     cursor = connection.cursor()
     cursor.execute("create table pytab (id number, data varchar2(20))")
     rows = [ (1, "First" ),

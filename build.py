@@ -11,7 +11,7 @@ transaction = oci.database.models.CreateAutonomousDatabaseBase(compartment_id=co
 generateAutonomousDatabaseWalletDetails = oci.database.models.GenerateAutonomousDatabaseWalletDetails(password=password)
 for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('tenancy')).data:
     zipfile.ZipFile(io.BytesIO(databaseClient.generate_autonomous_database_wallet(_.id, generateAutonomousDatabaseWalletDetails).data.content)).extractall(_.id)
-    print(re.search('(?<=server_name=)\w+(?=\))', pathlib.Path(_.id).joinpath('tnsnames.ora').read_text()).group(0))
+    print(re.search('(?<=service_name=)[.\w]+', pathlib.Path(_.id).joinpath('tnsnames.ora').read_text()).group(0))
 #connection = cx_Oracle.connect('admin', password, 'tcps://adb.us-sanjose-1.oraclecloud.com:1522/abc_cjjson_high.adb.oraclecloud.com?wallet_location=/Users/cjones/Cloud/CJJSON')
 #https://www.oracle.com/database/technologies/instant-client.html
 

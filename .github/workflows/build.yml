@@ -18,7 +18,7 @@ jobs:
               pip install aiohttp asyncpg asyncmy oci cx_Oracle
               echo '${{secrets.OCI}}' > oci.key
               python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
-              ls -al ~/.ssh
+              #ls -al ~/.ssh
               #if `az group exists -n linux`
               #then
               #    az group delete -n linux -y

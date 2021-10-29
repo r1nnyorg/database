@@ -15,6 +15,12 @@ jobs:
               docker login -u chaowenguo -p ${{secrets.DOCKER}}
               docker build -t chaowenguo/postgres .
               docker push chaowenguo/postgres
+              wget https://download.oracle.com/otn_software/linux/instantclient/213000/oracle-instantclient-basic-21.3.0.0.0-1.el8.x86_64.rpm https://download.oracle.com/otn_software/linux/instantclient/213000/oracle-instantclient-sqlplus-21.3.0.0.0-1.el8.x86_64.rpm https://download.oracle.com/otn_software/linux/instantclient/213000/oracle-instantclient-devel-21.3.0.0.0-1.el8.x86_64.rpm
+              sudo apt update
+              sudo apt install -y --no-install-recommends alien
+              sudo alien -i *.x86_64.rpm
+              export ORACLE_HOME=/usr/lib/oracle/21/client64
+              export LD_LIBRARY_PATH=$ORACLE_HOME/lib/$LD_LIBRARY_PATH
               pip install aiohttp asyncpg asyncmy oci cx_Oracle
               echo '${{secrets.OCI}}' > oci.key
               python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}

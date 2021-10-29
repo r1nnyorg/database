@@ -14,15 +14,7 @@ for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('
     tnsnames = pathlib.Path(_.id).joinpath('tnsnames.ora').read_text()
     connection = cx_Oracle.connect('admin', password, f"tcps://{re.search('(?<=host=)[.0-9a-z-]+', tnsnames).group(0)}:1522/{re.search('(?<=service_name=)[.0-9a-z_]+', tnsnames).group(0)}?wallet_location={_.id}")
     cursor = connection.cursor()
-    cursor.execute("create table pytab (id number, data varchar2(20))")
-    rows = [ (1, "First" ),
-         (2, "Second" ),
-         (3, "Third" ),
-         (4, "Fourth" ),
-         (5, "Fifth" ),
-         (6, "Sixth" ),
-         (7, "Seventh" ) ]
-    cursor.executemany("insert into pytab(id, data) values (:1, :2)", rows)
+    cursor.execute('drop table pytab')
     for row in cursor.execute('SELECT table_name, owner FROM user_tables'): print(row)
     #https://www.oracle.com/database/technologies/instant-client.html
 

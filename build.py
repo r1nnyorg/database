@@ -9,7 +9,7 @@ transaction = oci.database.models.CreateAutonomousDatabaseBase(compartment_id=co
 #databaseClientCompositeOperations.create_autonomous_database_and_wait_for_state(dataWarehouse, wait_for_states=[oci.database.models.AutonomousDatabase.LIFECYCLE_STATE_AVAILABLE])
 #databaseClientCompositeOperations.create_autonomous_database_and_wait_for_state(transaction, wait_for_states=[oci.database.models.AutonomousDatabase.LIFECYCLE_STATE_AVAILABLE])
 generateAutonomousDatabaseWalletDetails = oci.database.models.GenerateAutonomousDatabaseWalletDetails(password=password)
-for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('tenancy')).data: pathlib.Path(_.id).write_bytes(databaseClient.generate_autonomous_database_wallet(_.id, generateAutonomousDatabaseWalletDetails).data.content())
+for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('tenancy')).data: pathlib.Path(_.id).write_bytes(databaseClient.generate_autonomous_database_wallet(_.id, generateAutonomousDatabaseWalletDetails).data.content)
 #for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('tenancy')).data: print(type(databaseClient.generate_autonomous_database_wallet(_.id, generateAutonomousDatabaseWalletDetails).data))
 #connection = cx_Oracle.connect('admin', password, 'tcps://adb.us-sanjose-1.oraclecloud.com:1522/abc_cjjson_high.adb.oraclecloud.com?wallet_location=/Users/cjones/Cloud/CJJSON')
 #https://www.oracle.com/database/technologies/instant-client.html

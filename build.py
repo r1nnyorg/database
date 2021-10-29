@@ -11,9 +11,20 @@ transaction = oci.database.models.CreateAutonomousDatabaseBase(compartment_id=co
 generateAutonomousDatabaseWalletDetails = oci.database.models.GenerateAutonomousDatabaseWalletDetails(password=password)
 for _ in databaseClient.list_autonomous_databases(compartment_id=configure.get('tenancy')).data:
     zipfile.ZipFile(io.BytesIO(databaseClient.generate_autonomous_database_wallet(_.id, generateAutonomousDatabaseWalletDetails).data.content)).extractall(_.id)
-    print(re.search('(?<=service_name=)[.\w]+', pathlib.Path(_.id).joinpath('tnsnames.ora').read_text()).group(0))
-#connection = cx_Oracle.connect('admin', password, 'tcps://adb.us-sanjose-1.oraclecloud.com:1522/abc_cjjson_high.adb.oraclecloud.com?wallet_location=/Users/cjones/Cloud/CJJSON')
-#https://www.oracle.com/database/technologies/instant-client.html
+    tnsnames = pathlib.Path(_.id).joinpath('tnsnames.ora').read_text()
+    connection = cx_Oracle.connect('admin', password, f'tcps://{re.search('(?<=host=)[.\w]+', tnsnames).group(0)}:1522/{re.search('(?<=service_name=)[.\w]+', tnsnames).group(0)}?wallet_location={_.id}')
+    cursor = connection.cursor()
+    cursor.execute("create table pytab (id number, data varchar2(20))")
+    rows = [ (1, "First" ),
+         (2, "Second" ),
+         (3, "Third" ),
+         (4, "Fourth" ),
+         (5, "Fifth" ),
+         (6, "Sixth" ),
+         (7, "Seventh" ) ]
+    cursor.executemany("insert into pytab(id, data) values (:1, :2)", rows)
+    for row in cursor.execute('select * from pytab'): print(row)
+    #https://www.oracle.com/database/technologies/instant-client.html
 
 parser = argparse.ArgumentParser()
 for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)

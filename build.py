@@ -36,7 +36,7 @@ async def postgres(session, token):
                         await asyncio.sleep(int(response.headers.get('retry-after')))
                         async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if _.status == 200: break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as _: pass
     host = 'postgrespostgres'
     user = 'postgres'
     password = 'pos1gres+'
@@ -75,7 +75,7 @@ async def mysql(session, token):
                         await asyncio.sleep(int(response.headers.get('retry-after')))
                         async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if _.status == 200: break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/mysql?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as _: pass
     host = 'mysqlmysql'
     user = 'mysql'
     password = 'my1sql+my'

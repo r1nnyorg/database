@@ -104,36 +104,17 @@ async def mysql(session, token):
     database.close()
     await database.wait_closed()
     
-async def linux(session, token):
-    async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
-        if response.status == 204:
-            async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
-                if response.status == 202:
-                    while True:
-                        await asyncio.sleep(int(response.headers.get('retry-after')))
-                        async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
-                            if _.status == 200: break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response: pass
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as response:
-        print(response.status)
-        print(response.headers)
-        print(await response.json())
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus','properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'chaowenguo'}, 'storageProfile':{'imageReference':{'sku':'20_04-lts-gen2','publisher':'Canonical','version':'latest','offer':'0001-com-ubuntu-server-focal'},'osDisk':{'diskSizeGB':64}}}}) as response:
-        print(response.status)
-        print(response.headers)
-        print(await response.json())
-    
 async def main():
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
             token = (await response.json()).get('access_token')
-            await asyncio.gather(postgres(session, token), mysql(session, token), linux(session, token))
+            await asyncio.gather(postgres(session, token), mysql(session, token))
             
 #asyncio.run(main())
 
               #if `az group exists -n win`
               #then
-              #    az group delete -n win -y
+              #    az group delete -n wi -y
               #fi
               #az group create -n win -l westus
               #az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2019-datacenter-core-with-containers-smalldisk-g2:latest --size Standard_B1s --admin-username chaowenguo --admin-password HL798820y+HL798820y+ --os-disk-size-gb 64

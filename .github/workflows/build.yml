@@ -24,26 +24,6 @@ jobs:
               pip install aiohttp asyncpg asyncmy oci cx_Oracle
               echo '${{secrets.OCI}}' > oci.key
               python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
-              #if `az group exists -n linux`
-              #then
-              #    az group delete -n linux -y
-              #fi
-              #az group create -n linux -l westus
-              #az vm image list --offer UbuntuServer --all --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#understand-vm-images
-              #az vm list-sizes --location westus --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#find-available-vm-sizes
-              #az vm create -n linux -g linux --image Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:latest --size Standard_B1s --admin-username chaowenguo --generate-ssh-keys --os-disk-size-gb 64
-              #https://docs.microsoft.com/en-us/azure/virtual-machines/linux/nsg-quickstart#quickly-open-a-port-for-a-vm
-              #az vm open-port -g linux -n linux --port 443
-              #cp ~/.ssh/id_rsa `az vm show -d -g linux -n linux --query publicIps -o tsv`.key
-              #ip=`ls *.key`
-              #ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.key} 'sudo apt update; sudo apt purge -y snapd; wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession; rm google-chrome-stable_current_amd64.deb'
-              #if `az group exists -n win`
-              #then
-              #    az group delete -n win -y
-              #fi
-              #az group create -n win -l westus
-              #az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2019-datacenter-core-with-containers-smalldisk-g2:latest --size Standard_B1s --admin-username chaowenguo --admin-password HL798820y+HL798820y+ --os-disk-size-gb 64
-              #az vm open-port -g win -n win --port 22
     clean:
         runs-on: ubuntu-latest
         if: github.event.schedule == '0 1 * * *'

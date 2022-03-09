@@ -16,6 +16,8 @@ jobs:
               docker login -u chaowenguo -p ${{secrets.DOCKER}}
               docker build -t chaowenguo/postgres postgres
               docker push chaowenguo/postgres
+              docker build -t chaowenguo/redis redis
+              docker push chaowenguo/redis
               #wget https://download.oracle.com/otn_software/linux/instantclient/213000/oracle-instantclient-basic-21.3.0.0.0-1.el8.x86_64.rpm https://download.oracle.com/otn_software/linux/instantclient/213000/oracle-instantclient-sqlplus-21.3.0.0.0-1.el8.x86_64.rpm https://download.oracle.com/otn_software/linux/instantclient/213000/oracle-instantclient-devel-21.3.0.0.0-1.el8.x86_64.rpm
               #sudo apt update
               #sudo apt install -y --no-install-recommends alien

@@ -6,7 +6,7 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-        #if: github.event_name == 'dummy'
+        if: github.event_name == 'dummy'
         steps:
         - uses: actions/checkout@main
         - uses: actions/setup-python@main

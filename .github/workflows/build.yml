@@ -25,6 +25,17 @@ jobs:
               #pip install aiohttp asyncpg asyncmy oci cx_Oracle
               #echo '${{secrets.OCI}}' > oci.key
               #python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
+    cockroach:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push'
+        steps:
+        - run: |
+              curl https://binaries.cockroachdb.com/cockroach-v21.2.7.linux-amd64.tgz | tar -xz
+              cd cockroach*
+              sudo cp cockroach /usr/local/bin
+              sudo cp -r lib /usr/local
+              ls -al /usr/local/bin
+              ls -al /usr/local/lib
     clean:
         runs-on: ubuntu-latest
         if: github.event.schedule == '0 1 * * *'

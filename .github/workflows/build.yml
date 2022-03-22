@@ -27,7 +27,7 @@ jobs:
               #python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
     databaseConnect:
         runs-on: ubuntu-latest
-        #if: github.event_name == 'dummy'
+        if: github.event_name == 'dummy'
         steps:
         - uses: actions/checkout@main
         - run: |

@@ -25,7 +25,7 @@ jobs:
               #pip install aiohttp asyncpg asyncmy oci cx_Oracle
               #echo '${{secrets.OCI}}' > oci.key
               #python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
-    cockroachCert:
+    cockroach:
         runs-on: ubuntu-latest
         if: github.event_name == 'dummy'
         steps:
@@ -51,9 +51,9 @@ jobs:
               git config user.email dummy
               git commit --allow-empty-message -m ''
               git push
-    cockroachInit:
+    databaseConnect:
         runs-on: ubuntu-latest
-        if: github.event_name == 'push'
+        if: github.event_name == 'dummy'
         steps:
         - uses: actions/checkout@main
         - run: |

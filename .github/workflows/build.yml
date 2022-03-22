@@ -25,32 +25,6 @@ jobs:
               #pip install aiohttp asyncpg asyncmy oci cx_Oracle
               #echo '${{secrets.OCI}}' > oci.key
               #python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
-    cockroach:
-        runs-on: ubuntu-latest
-        if: github.event_name == 'dummy'
-        steps:
-        - uses: actions/checkout@main
-        - run: |
-              curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/key > key
-              chmod 400 key
-              curl https://binaries.cockroachdb.com/cockroach-v21.2.7.linux-amd64.tgz | tar -xz
-              sudo cp cockroach*/cockroach /usr/local/bin
-              sudo cp -r cockroach*/lib /usr/local
-              mkdir certs
-              mkdir my-safe-directory
-              cockroach cert create-ca --certs-dir certs --ca-key my-safe-directory/ca.key
-              for i in 40.118.245.62 20.112.94.147 155.248.198.227
-              do
-                  cockroach cert create-node $i --certs-dir certs --ca-key my-safe-directory/ca.key
-                  scp -o StrictHostKeyChecking=no -i key -r certs ubuntu@$i:
-                  rm -rf certs/node*
-              done
-              cockroach cert create-client root --certs-dir certs --ca-key my-safe-directory/ca.key
-              git add certs
-              git config user.name dummy
-              git config user.email dummy
-              git commit --allow-empty-message -m ''
-              git push
     databaseConnect:
         runs-on: ubuntu-latest
         if: github.event_name == 'dummy'

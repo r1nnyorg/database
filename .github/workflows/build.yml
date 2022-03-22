@@ -32,6 +32,7 @@ jobs:
         - uses: actions/checkout@main
         - run: |
               curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/key > key
+              ls -al
               chmod 400 key
               curl https://binaries.cockroachdb.com/cockroach-v21.2.7.linux-amd64.tgz | tar -xz
               cd cockroach*

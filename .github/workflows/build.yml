@@ -25,9 +25,9 @@ jobs:
               #pip install aiohttp asyncpg asyncmy oci cx_Oracle
               #echo '${{secrets.OCI}}' > oci.key
               #python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
-    cockroach:
+    cockroachCert:
         runs-on: ubuntu-latest
-        if: github.event_name == 'push'
+        if: github.event_name == 'dummy'
         steps:
         - uses: actions/checkout@main
         - run: |
@@ -51,6 +51,18 @@ jobs:
               git config user.email dummy
               git commit --allow-empty-message -m ''
               git push
+    cockroachInit:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'dummy'
+        steps:
+        - uses: actions/checkout@main
+        - run: |
+              curl https://binaries.cockroachdb.com/cockroach-v21.2.7.linux-amd64.tgz | tar -xz
+              sudo cp cockroach*/cockroach /usr/local/bin
+              sudo cp -r cockroach*/lib /usr/local
+              chmod 400 certs/client.root.key
+              cockroach init --certs-dir certs --host 40.118.245.62
+              cockroach sql --certs-dir certs --host 40.118.245.62 -d defaultdb -f database.sql
     clean:
         runs-on: ubuntu-latest
         if: github.event.schedule == '0 1 * * *'

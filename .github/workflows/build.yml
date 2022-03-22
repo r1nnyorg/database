@@ -27,10 +27,11 @@ jobs:
               #python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
     databaseConnect:
         runs-on: ubuntu-latest
-        if: github.event_name == 'dummy'
+        if: github.event_name == 'push'
         steps:
         - uses: actions/checkout@main
         - run: |
+              mkdir certs
               curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/certs/ca.crt > certs/ca.crt
               curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/certs/client.root.crt > certs/client.root.crt
               curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/certs/client.root.key > certs/client.root.key

@@ -44,6 +44,8 @@ jobs:
               sudo apt update
               sudo apt install -y --no-install-recommends redis-tools
               redis-cli --cluster create 40.118.245.62:6379 20.112.94.147:6379 155.248.198.227:6379 --cluster-yes -a ${{secrets.PASSWORD}}
+              #https://www.cockroachlabs.com/docs/stable/deploy-cockroachdb-on-premises.html#step-9-scale-the-cluster
+              #Redis cluster tutorial add new node
     clean:
         runs-on: ubuntu-latest
         if: github.event.schedule == '0 1 * * *'

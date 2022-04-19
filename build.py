@@ -22,7 +22,8 @@ for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
 args = parser.parse_args()
 subscription='9046396e-e215-4cc5-9eb7-e25370140233'
 
-#az login --service-principal -u <app-id> -p <password-or-cert> --tenant <tenant>
+#az ad sp create-for-rbac
+#az login --service-principal -u appId -p password --tenant tenant
 #az group delete -n postgres -y
 #az group create -n postgres -l westus
 #az postgres flexible-server create -n postgrespostgres -g postgres -l westus -u postgres -p pos1gres+ -d default --public-access all --tier Burstable --sku-name Standard_B1ms --storage-size 32 --version 13

@@ -22,7 +22,7 @@ for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
 args = parser.parse_args()
 subscription='9046396e-e215-4cc5-9eb7-e25370140233'
 
-#az ad sp create-for-rbac
+#az ad sp create-for-rbac --role Contributor --scopes /subscriptions/subscriptionID
 #az login --service-principal -u appId -p password -t tenant
 #az group delete -n postgres -y
 #az group create -n postgres -l westus

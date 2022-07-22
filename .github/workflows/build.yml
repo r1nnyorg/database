@@ -1,9 +1,16 @@
-on:
-    push:
-    schedule:
-    - cron: '0 1 * * *'
+on: push
     
 jobs:
+    backup:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push'
+        steps:
+        - uses: actions/checkout@main
+        - run: |
+              git fetch --unshallow
+              echo '${{secrets.KEY}}' > key
+              chmod 400 key
+              git -c core.sshCommand='ssh -i key -o StrictHostKeyChecking=no' push -f git@bitbucket.org:chaowenguo/${GITHUB_REPOSITORY#*/}
     build:
         runs-on: ubuntu-latest
         if: github.event_name == 'dummy'
@@ -48,7 +55,8 @@ jobs:
               #Redis cluster tutorial add new node
     clean:
         runs-on: ubuntu-latest
-        if: github.event.schedule == '0 1 * * *'
+        permissions:
+            actions: write
         steps:
         - uses: actions/setup-python@main
           with:

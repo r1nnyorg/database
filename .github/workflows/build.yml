@@ -8,7 +8,7 @@ jobs:
         - uses: actions/checkout@main
         - run: |
               git fetch --unshallow
-              echo '${{secrets.KEY}}' > key
+              echo '{{secrets.KEY}}' > key
               chmod 400 key
               git -c core.sshCommand='ssh -i key -o StrictHostKeyChecking=no' push -f git@bitbucket.org:chaowenguo/${GITHUB_REPOSITORY#*/}
     build:
@@ -34,15 +34,16 @@ jobs:
               #python build.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}}
     databaseConnect:
         runs-on: ubuntu-latest
-        if: github.event_name == 'dummy'
+        if: github.event_name == 'push'
         steps:
         - uses: actions/checkout@main
         - run: |
-              mkdir certs
-              curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/certs/ca.crt > certs/ca.crt
-              curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/certs/client.root.crt > certs/client.root.crt
-              curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/certs/client.root.key > certs/client.root.key
-              curl https://binaries.cockroachdb.com/cockroach-v21.2.7.linux-amd64.tgz | tar -xz
+              echo '{{secrets.KEY}}' > key
+              chmod 400 key
+              git -c core.sshCommand='ssh -i key -o StrictHostKeyChecking=no' clone git@bitbucket.org:chaowenguo/key keykey
+              mv keykey/certs .
+              rm -rf keykey
+              curl https://binaries.cockroachdb.com/cockroach-v22.1.2.linux-amd64.tgz | tar -xz
               sudo cp cockroach*/cockroach /usr/local/bin
               sudo cp -r cockroach*/lib /usr/local
               chmod 400 certs/client.root.key

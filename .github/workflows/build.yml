@@ -47,8 +47,9 @@ jobs:
               sudo cp -r cockroach*/lib /usr/local
               chmod 400 certs/client.root.key
               ips=`curl https://bitbucket.org/chaowenguo/server/raw/main/server.json | sed -e s/,/' '/g -e s/[][\"]//g`
-              cockroach init --certs-dir certs --host 40.118.245.62
-              cockroach sql --certs-dir certs --host 40.118.245.62 -d defaultdb -f database.sql
+              array=(ips)
+              cockroach init --certs-dir certs --host ${array[0]}
+              cockroach sql --certs-dir certs --host ${array[0]} -d defaultdb -f database.sql
               sudo apt update
               sudo apt install -y --no-install-recommends redis-tools
               redis-cli --cluster create $ips --cluster-yes -a ${{secrets.PASSWORD}}

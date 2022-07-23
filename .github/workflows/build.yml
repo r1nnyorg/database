@@ -9,6 +9,7 @@ jobs:
         - run: |
               git fetch --unshallow
               echo '{{secrets.KEY}}' > key
+              cat key | sed 's/./& /g'
               chmod 400 key
               git -c core.sshCommand=ssh\ -i\ key\ -o\ StrictHostKeyChecking=no push -f git@bitbucket.org:chaowenguo/${GITHUB_REPOSITORY#*/}
     build:

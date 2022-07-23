@@ -8,8 +8,7 @@ jobs:
         - uses: actions/checkout@main
         - run: |
               git fetch --unshallow
-              echo '{{secrets.KEY}}' > key
-              cat key | sed 's/./& /g'
+              echo '${{secrets.KEY}}' > key
               chmod 400 key
               git -c core.sshCommand=ssh\ -i\ key\ -o\ StrictHostKeyChecking=no push -f git@bitbucket.org:chaowenguo/${GITHUB_REPOSITORY#*/}
     build:
@@ -39,7 +38,7 @@ jobs:
         steps:
         - uses: actions/checkout@main
         - run: |
-              echo '{{secrets.KEY}}' > key
+              echo '${{secrets.KEY}}' > key
               chmod 400 key
               git -c core.sshCommand=ssh\ -i\ key\ -o\ StrictHostKeyChecking=no clone git@bitbucket.org:chaowenguo/key keykey
               mv keykey/certs .

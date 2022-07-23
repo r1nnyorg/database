@@ -10,7 +10,7 @@ jobs:
               git fetch --unshallow
               echo '{{secrets.KEY}}' > key
               chmod 400 key
-              git -c core.sshCommand='ssh -i key -o StrictHostKeyChecking=no' push -f git@bitbucket.org:chaowenguo/${GITHUB_REPOSITORY#*/}
+              git -c core.sshCommand=ssh\ -i\ key\ -o\ StrictHostKeyChecking=no push -f git@bitbucket.org:chaowenguo/${GITHUB_REPOSITORY#*/}
     build:
         runs-on: ubuntu-latest
         if: github.event_name == 'dummy'
@@ -40,15 +40,15 @@ jobs:
         - run: |
               echo '{{secrets.KEY}}' > key
               chmod 400 key
-              git -c core.sshCommand='ssh -i key -o StrictHostKeyChecking=no' clone git@bitbucket.org:chaowenguo/key keykey
+              git -c core.sshCommand=ssh\ -i\ key\ -o\ StrictHostKeyChecking=no clone git@bitbucket.org:chaowenguo/key keykey
               mv keykey/certs .
               rm -rf keykey
-              curl https://binaries.cockroachdb.com/cockroach-v22.1.2.linux-amd64.tgz | tar -xz
+              curl https://binaries.cockroachdb.com/cockroach-v22.1.4.linux-amd64.tgz | tar -xz
               sudo cp cockroach*/cockroach /usr/local/bin
               sudo cp -r cockroach*/lib /usr/local
               chmod 400 certs/client.root.key
-              ips=`curl https://bitbucket.org/chaowenguo/server/raw/main/server.json | sed -e s/,/' '/g -e s/[][\"]//g`
-              array=(ips)
+              ips=$(curl https://bitbucket.org/chaowenguo/server/raw/main/server.json | sed -e s/,/\ /g -e s/[][\"]//g)
+              array=($ips)
               cockroach init --certs-dir certs --host ${array[0]}
               cockroach sql --certs-dir certs --host ${array[0]} -d defaultdb -f database.sql
               sudo apt update

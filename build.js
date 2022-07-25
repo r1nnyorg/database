@@ -2,7 +2,8 @@ import fetch from 'node-fetch'
 
 const subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
 
-async function postgres(session, token):
+async function postgres(token)
+{
     const group = `https://management.azure.com/subscriptions/${subscription}/resourcegroups/postgres?api-version=2021-04-01` 
     if (globalThis.Object.is((await fetch(group, {method:'head', headers:{authorization:`Bearer ${token}`}})).status, 204))
     {
@@ -41,5 +42,7 @@ async function postgres(session, token):
     database = await asyncpg.create_pool(host=f'{host}.postgres.database.azure.com', user=user, database=default, password=password)
     await database.execute(pathlib.Path('database.sql').read_text())
     await database.close()
+}
 
 const token = (await fetch('https://login.microsoftonline.com/deb7ba76-72fc-4c07-833f-1628b5e92168/oauth2/token', {method:'post', body:new globalThis.URLSearchParams({grant_type:'client_credentials', client_id:'60f0699c-a6da-4a59-be81-fd413d2c68bc', client_secret:'ljEw3qnk.HcDcd85aSBLgjdJ4uA~bqPKYz', resource:'https://management.azure.com/'})}).then(_ => _.json())).access_token
+await postgres(token)

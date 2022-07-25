@@ -14,4 +14,4 @@ if (globalThis.Object.is((await fetch(group, {method:'head', headers:{authorizat
         }
     }
 }
-await fetch(group, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})
+await fetch(group, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})

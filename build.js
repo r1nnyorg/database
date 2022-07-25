@@ -17,12 +17,12 @@ async function postgres(token)
             }
         }
     }
-    await fetch(group, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})   async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/postgres?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as _: pass
+    await fetch(group, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})
     host = 'postgrespostgres'
     user = 'postgres'
     password = 'pos1gres+'
     default = 'default'
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/{host}?api-version=2020-02-14-preview', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':user,'administratorLoginPassword':password,'version':'13','storageProfile':{'storageMB':32 * 1024}}}) as response:
+    await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/postgres/providers/Microsoft.DBForPostgreSql/flexibleServers/${host}?api-version=2020-02-14-preview`, {method:'put', headers={authorization:f'Bearer {token}'}, json={'location':'westus', 'sku':{'tier':'Burstable','name':'Standard_B1ms'}, 'properties':{'administratorLogin':user,'administratorLoginPassword':password,'version':'13','storageProfile':{'storageMB':32 * 1024}}}})
         if response.status == 202:
             while True:
                 await asyncio.sleep(int(response.headers.get('retry-after')))

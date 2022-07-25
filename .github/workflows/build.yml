@@ -53,7 +53,11 @@ jobs:
               sudo cp cockroach*/cockroach /usr/local/bin
               sudo cp -r cockroach*/lib /usr/local
               chmod 400 certs/client.root.key
-              ips=$(curl https://bitbucket.org/chaowenguo/server/raw/main/server.json | sed -e s/,/\ /g -e s/[][\"]//g)
+              ips=$(curl https://bitbucket.org/chaowenguo/server/raw/main/ip.json | sed -e s/,/\ /g -e s/[][\"]//g)
+              for ip in $ips
+              do
+                  ssh -o StrictHostKeyChecking=no -i key ubuntu@$ip 'sudo rm -rf /var/lib/cockroach'
+              done
               array=($ips)
               cockroach init --certs-dir certs --host ${array[0]}
               cockroach sql --certs-dir certs --host ${array[0]} -d defaultdb -f database.sql

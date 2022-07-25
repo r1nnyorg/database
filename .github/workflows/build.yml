@@ -53,7 +53,7 @@ jobs:
               cockroach sql --certs-dir certs --host ${array[0]} -d defaultdb -f database.sql
               sudo apt update
               sudo apt install -y --no-install-recommends redis-tools
-              redis-cli --cluster create $ips --cluster-yes -a ${{secrets.PASSWORD}}
+              redis-cli --cluster create $(echo $ips | sed -e s/\ /:6379\ /g -e s/$/:6379/g) --cluster-yes -a ${{secrets.PASSWORD}}
               #https://www.cockroachlabs.com/docs/stable/deploy-cockroachdb-on-premises.html#step-9-scale-the-cluster
               #Redis cluster tutorial add new node
     clean:

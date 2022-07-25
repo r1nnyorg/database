@@ -54,10 +54,6 @@ jobs:
               sudo cp -r cockroach*/lib /usr/local
               chmod 400 certs/client.root.key
               readonly ips=$(curl https://bitbucket.org/chaowenguo/server/raw/main/ip.json | sed -e s/,/\ /g -e s/[][\"]//g)
-              for ip in $ips
-              do
-                  ssh -o StrictHostKeyChecking=no -i key ubuntu@$ip 'sudo rm -rf /var/lib/cockroach'
-              done
               readonly array=($ips)
               cockroach init --certs-dir certs --host ${array[0]}
               cockroach sql --certs-dir certs --host ${array[0]} -d defaultdb -f database.sql
